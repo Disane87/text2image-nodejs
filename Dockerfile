@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18-alpine
 
 # Metadata as defined in the OCI image spec annotations
 LABEL org.opencontainers.image.authors="Marco Franke <mfranke87@icloud.com>" \
@@ -8,6 +8,17 @@ LABEL org.opencontainers.image.authors="Marco Franke <mfranke87@icloud.com>" \
       org.opencontainers.image.version="1.0"
 
 WORKDIR /text2image/
+
+RUN apk add --update --no-cache \
+    make \
+    g++ \
+    jpeg-dev \
+    cairo-dev \
+    giflib-dev \
+    pango-dev \
+    libtool \
+    autoconf \
+    automake
 
 COPY package*.json ./
 
