@@ -183,7 +183,7 @@ async function addTextToImage(
   return { image: dataUrl, mimeType };
 }
 
-app.get("/generate-image", async (req, res) => {
+app.get("/generate-image/:fileName", async (req, res) => {
   const queryParams = queryString.parse(req.query);
 
   const sourceImage: string = req.query.sourceImage;
@@ -193,6 +193,8 @@ app.get("/generate-image", async (req, res) => {
 
   const apiKeyQS = req.query.apiKey;
   const apiKeyEnv = process.env.API_KEY;
+
+  const fileName = req.params.fileName;
 
   if (apiKeyQS != apiKeyEnv) {
     res
