@@ -1,6 +1,4 @@
 import express from "express";
-// import { fileURLToPath } from "url";
-import queryString from "query-string";
 import {
   addTextToImage,
   generateImageFromOpenGraph,
@@ -10,61 +8,66 @@ import { MiddleWares } from "./api-key.middleware.js";
 const app = express();
 const port = 3000;
 
-// const __filename = fileURLToPath(import.meta.url);
+import presets from "./config/presets.json" assert { type: "json" };
+import { Presets } from "./interfaces/presets.interface.js";
 
-app.get("/generate-image/:fileName", async (req, res) => {
-  const queryParams = queryString.parse(req.query as unknown as string);
+app.get("/image/:preset/:fileName", async (req, res) => {
+  // Route params
+  const presetName: string = req.params.preset as string;
 
-  const sourceImage: string = req.query.sourceImage?.toString() || "";
-  const text: string = req.query.text?.toString() || "";
-  const returnType: "html" | "file" =
-    (req.query.returnType?.toString() as "html" | "file") || "file";
-  const debug = !!queryParams.debug || false;
+  // QueryString params
+  const url: string = req.query.url as string;
+  const text: string = req.query.text as string;
+  const openGraph: boolean = Boolean(req.query.openGraph) || false;
 
-  if (!sourceImage || !text) {
-    res.status(400).send("Missing required parameters (sourceImage, text)");
+  if (!presetName) {
+    res.status(400).send("Missing required parameters (preset)");
     return;
   }
 
-  console.log("Source image:", sourceImage);
-  console.log("Text:", text);
-  console.log("Return type:", returnType);
-  console.log("Debug:", debug);
+  if (!openGraph) {
+    if (!url) {
+      res.status(400).send("Missing required parameters (url)");
+      return;
+    }
 
-  const { image, mimeType } = await addTextToImage(sourceImage, text, debug);
-
-  if (returnType === "file") {
-    const buffer = Buffer.from(image.split(",")[1], "base64");
-
-    res.writeHead(200, {
-      "Content-Type": mimeType,
-      "Content-Length": buffer.length,
-    });
-    res.end(buffer);
+    if (!text) {
+      res.status(400).send("Missing required parameters (text)");
+      return;
+    }
   }
 
-  if (returnType === "html") {
-    res.send(`<img src='${image}' />'`);
+  if (!url) {
+    res.status(400).send("Missing required parameters (url)");
+    return;
   }
-});
 
-app.get("/open-graph/:fileName", async (req, res) => {
-  const url: string = req.query.url as string;
-  const width: number = Number(req.query.width);
-  const height: number = Number(req.query.height);
-  // const text: string = req.query.text;
+  const configPresets: Presets = presets;
+  const preset = configPresets[presetName];
 
-  const result = await generateImageFromOpenGraph(url, { width, height });
+  if (preset && !preset) {
+    res.status(400).send("Invalid preset");
+    return;
+  }
+
+  console.log("Preset:", presetName, preset);
+
+  let result: {
+    imageBuffer: string | Buffer;
+    mimeType: string;
+  } | null = null;
+
+  if (openGraph) {
+    result = await generateImageFromOpenGraph(url, preset);
+  } else {
+    result = await addTextToImage(url, text, preset);
+  }
 
   if (result) {
-    const { image, mimeType } = result;
-    const buffer = Buffer.from(image.split(",")[1], "base64");
+    const { imageBuffer, mimeType } = result;
 
-    res.writeHead(200, {
-      "Content-Type": mimeType,
-      "Content-Length": buffer.length,
-    });
-    res.end(buffer);
+    res.writeHead(200, { "Content-Type": mimeType });
+    res.end(imageBuffer, "binary");
   } else {
     res.status(404).send("Image not found");
   }

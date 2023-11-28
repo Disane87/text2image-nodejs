@@ -5,14 +5,12 @@ export const MiddleWares = (app: Express) => {
     const apiKeyQS = req.query.apiKey;
     const apiKeyEnv = process.env.API_KEY;
 
-    if (apiKeyQS !== apiKeyEnv) {
+    if (apiKeyQS !== apiKeyEnv && process.env.NODE_ENV !== "development") {
       res
         .status(402)
         .send("⚠️ Invalid API key. Please provide a valid API key. ");
       return;
     }
-
-    console.log("Time:", Date.now());
     next();
   });
 
