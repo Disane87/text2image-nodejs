@@ -6,6 +6,19 @@ import path from "path";
 import process from "process";
 import { Preset } from "./interfaces/presets.interface";
 
+const PUPETEER_ARGS = {
+  puppeteerArgs: {
+    headless: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--headless",
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+    ],
+  },
+};
+
 const ENVIRONMENT = process.env.NODE_ENV || "development";
 const WORKDIR = path.join(
   process.cwd(),
@@ -31,6 +44,7 @@ export async function addTextToImage(
       text,
       preset,
     },
+    ...PUPETEER_ARGS,
   })) as Buffer;
 
   return { imageBuffer: htmlImage, mimeType: "image/png" };
@@ -73,6 +87,7 @@ export async function generateImageFromOpenGraph(
     const htmlImage = (await nodeHtmlToImage({
       html: htmlContent,
       content: ogData,
+      ...PUPETEER_ARGS,
     })) as Buffer;
 
     return { imageBuffer: htmlImage, mimeType: "image/png" };

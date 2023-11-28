@@ -1,4 +1,5 @@
-FROM node:18-alpine
+FROM satantime/puppeteer-node:20-slim
+ENV NODE_ENV=production
 
 # Metadata as defined in the OCI image spec annotations
 LABEL org.opencontainers.image.authors="Marco Franke <mfranke87@icloud.com>" \
@@ -9,24 +10,23 @@ LABEL org.opencontainers.image.authors="Marco Franke <mfranke87@icloud.com>" \
 
 WORKDIR /text2image/
 
-RUN apk add --update --no-cache \
-    make \
-    g++ \
-    jpeg-dev \
-    cairo-dev \
-    giflib-dev \
-    pango-dev \
-    libtool \
-    autoconf \
-    automake
+# RUN apk add --update --no-cache \
+#     make \
+#     g++ \
+#     jpeg-dev \
+#     cairo-dev \
+#     giflib-dev \
+#     pango-dev \
+#     libtool \
+#     autoconf \
+#     automake
 
 COPY package*.json ./
 
 RUN npm install
+RUN npm install -g puppeteer
 
 COPY dist/ ./dist/
-COPY fonts/ ./fonts/
-
 
 EXPOSE 3000
 
