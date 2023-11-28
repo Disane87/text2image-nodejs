@@ -1,10 +1,9 @@
-<!-- [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
-[![Validate](https://github.com/Disane87/spoolman-homeassistant/actions/workflows/validate.yml/badge.svg)](https://github.com/Disane87/spoolman-homeassistant/actions/workflows/validate.yml)
-![GitHub all releases](https://img.shields.io/github/downloads/Disane87/spoolman-homeassistant/total)
-![GitHub](https://img.shields.io/github/license/Disane87/spoolman-homeassistant)
-![GitHub issues by-label](https://img.shields.io/github/issues/Disane87/spoolman-homeassistant/bug?color=red)
-![GitHub contributors](https://img.shields.io/github/contributors/Disane87/spoolman-homeassistant)
-[![semantic-release: angular](https://img.shields.io/badge/semantic--release-conventionalcommits-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release) -->
+![GitHub](https://img.shields.io/github/license/Disane87/text2image-nodejs)
+![GitHub issues by-label](https://img.shields.io/github/issues/Disane87/text2image-nodejs/bug?color=red)
+![GitHub contributors](https://img.shields.io/github/contributors/Disane87/text2image-nodejs)
+![Docker Stars](https://img.shields.io/docker/stars/disane/text2image)
+![Docker Pulls](https://img.shields.io/docker/pulls/disane/text2image)
+![Docker Image Version (latest semver)](https://img.shields.io/docker/v/disane/text2image)
 
 ![image](./public/text2image.png)
 
