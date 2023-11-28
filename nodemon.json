@@ -5,7 +5,8 @@
         "node_modules"
     ],
     "watch": [
-        "src"
+        "src",
+        "templates"
     ],
     "exec": "npm run build && npm run start --inspect",
     "ext": "ts",

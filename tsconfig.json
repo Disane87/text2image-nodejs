@@ -2,14 +2,15 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.test.ts"],
   "compilerOptions": {
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM"],
     "target": "ES2022",
     "outDir": "dist",
-    "module": "ES2022",
+    "module": "ESNext",
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "resolveJsonModule": true
   }
 }
