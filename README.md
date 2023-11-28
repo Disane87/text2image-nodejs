@@ -27,7 +27,7 @@ This docker container enables you to create images from links. This is pretty us
 
 # 🏗️ Installation
 
-To use this piece of software you need a Docker host. Just run the following command and youÄre good to go:
+To use this piece of software you need a Docker host. Just run the following command and you're good to go:
 
 ```bash
 docker run -d --name='text2image' -e 'API_KEY'='[YOUR API-KEY]' -p '3000:3000/tcp'  'disane/text2image'
