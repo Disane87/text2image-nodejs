@@ -89,6 +89,34 @@ These variables/placholders are available:
 
 - In `normal` mode (`OpenGraph` = `false`) only `imageUrl`, `preset` and `text` is available.
 
+# 🆙 Custom font
+We're exposing a `head.hbs` template to enable custom HTML stuff, like custom fonts:
+
+```hbs
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.cdnfonts.com/css/luckiest-guy" rel="stylesheet">   
+<style>
+   .stroke {
+    -webkit-text-stroke-width: 5px;
+    -webkit-text-stroke-color: #000;
+}
+
+
+</style>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+            fontFamily: {
+                'luckiest-guy': 'Luckiest Guy'
+            }
+        }
+      }
+    }
+  </script>
+```
+
+
 # 🚀 Examples
 
 ## OpenGraph
