@@ -91,7 +91,10 @@ async function getHTML(preset: Preset) {
     "utf8"
   );
 
-  const htmlContent = `<html><head>${headTemplate}</head><body style="height:${sizes.height}px;width:${sizes.width}px">${templateContent}</body></html>`;
+  const htmlContent = `<html class="h-[${sizes.height}px] w-[${sizes.width}px]">
+    <head>${headTemplate}</head>
+    <body class="h-[${sizes.height}px] w-[${sizes.width}px]">${templateContent}</body>
+  </html>`;
   console.log("HTML content:", htmlContent);
   return htmlContent;
 }
