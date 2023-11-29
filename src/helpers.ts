@@ -6,7 +6,7 @@ import { Presets } from "./interfaces/presets.interface.js";
 
 export async function checkAndCopyFolders() {
   // Check if config folder and template are empty, of so, copy the contents from ./.tmp/config and ./.tmp/template
-  const foldersToCheck = ["./config", "./templates"];
+  const foldersToCheck = ["config", "templates"];
 
   foldersToCheck.forEach(async (folder) => {
     Logger.debug("Checking folder: " + folder, "Folder check");
@@ -21,7 +21,8 @@ export async function checkAndCopyFolders() {
 
         await fs.cp(
           path.join(WORKDIR, ".tmp", folder),
-          path.join(WORKDIR, folder)
+          path.join(WORKDIR, folder),
+          { recursive: true }
         );
       }
       Logger.debug(`Folder ${folder} exists and is not empty`, "Folder check");

@@ -1,14 +1,6 @@
-# Stufe 1: Build-Stage
-FROM satantime/puppeteer-node:20-slim as builder
-WORKDIR /text2image/
-
-# Kopiere nur die Paketbeschreibungen und installiere Abhängigkeiten
-COPY package*.json ./
-RUN npm install --production && npm install -g puppeteer
-
-# Kopiere den kompilierten Code und node_modules in die finale Stufe
 FROM satantime/puppeteer-node:20-slim
-WORKDIR /text2image/
+ENV NODE_ENV=production
+ENV NODE_NO_WARNINGS=1
 
 # Metadata as defined in the OCI image spec annotations
 LABEL org.opencontainers.image.authors="Marco Franke <mfranke87@icloud.com>" \
@@ -17,12 +9,15 @@ LABEL org.opencontainers.image.authors="Marco Franke <mfranke87@icloud.com>" \
       org.opencontainers.image.title="Text2Image" \
       org.opencontainers.image.version="1.0"
 
-# Kopiere node_modules und dist aus der Build-Stufe
-COPY --from=builder /text2image/dist/ .
-COPY --from=builder /text2image/node_modules/ ./node_modules/
+WORKDIR /text2image/
 
-# Kopiere restliche Dateien aus der Build-Stufe
-COPY . .
+COPY package*.json .
+
+RUN npm install
+RUN npm install -g puppeteer
+
+COPY dist/ .
 
 EXPOSE 3000
+
 CMD ["node", "index.js"]
