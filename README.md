@@ -29,9 +29,22 @@ This docker container enables you to create images from links. This is pretty us
 To use this piece of software you need a Docker host. Just run the following command and you're good to go:
 
 ```bash
-docker run -d --name='text2image' -e 'API_KEY'='[YOUR API-KEY]' -p '3000:3000/tcp'  'disane/text2image'
+docker run
+  -d --name='text2image'
+  -e 'API_KEY'='[YOUR API-KEY]'
+  -p '3000:3000/tcp'
+  -v '/mnt/user/appdata/text2image/config':'/text2image/config':'rw'
+  -v '/mnt/user/appdata/text2image/templates':'/text2image/templates':'rw'
+  -v '/mnt/user/appdata/text2image/logs':'/text2image/logs':'rw' 'disane/text2image'
+  'disane/text2image'
 
 ```
+
+> [!IMPORTANT]
+> Please don't forget to mount the `config`, `templates` and/or `log` folder. You can do that with docker volumnes against `/text2image/config`, `/text2image/templates/` or `/text2image/log/`
+
+> [!NOTE]
+> If you mount the folders the default content is only copied once! Therefore you won't get new templates. If you want to get the latest stuff, you have do remove all mounted folders and restart the container. _Make a backup of your files_. The System will copy the default stuff if they are missing. After that you can copy/replace your changes. Currently there is no migration or merging your content with new one.
 
 # 🛠️ Usage
 
@@ -89,32 +102,21 @@ These variables/placholders are available:
 - In `normal` mode (`OpenGraph` = `false`) only `imageUrl`, `preset` and `text` is available.
 
 # 🆙 Custom font
+
 We're exposing a `head.hbs` template to enable custom HTML stuff, like custom fonts:
 
 ```hbs
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.cdnfonts.com/css/luckiest-guy" rel="stylesheet">   
+<link href="https://fonts.cdnfonts.com/css/luckiest-guy" rel="stylesheet" />
 <style>
-   .stroke {
-    -webkit-text-stroke-width: 5px;
-    -webkit-text-stroke-color: #000;
-}
-
+  .stroke { -webkit-text-stroke-width: 5px; -webkit-text-stroke-color: #000; }
 
 </style>
 <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-            fontFamily: {
-                'luckiest-guy': 'Luckiest Guy'
-            }
-        }
-      }
-    }
-  </script>
+  tailwind.config = { theme: { extend: { fontFamily: { 'luckiest-guy': 'Luckiest
+  Guy' } } } }
+</script>
 ```
-
 
 # 🚀 Examples
 
