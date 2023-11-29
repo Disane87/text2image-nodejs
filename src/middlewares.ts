@@ -1,8 +1,7 @@
-import { Express } from "express";
 import Logger from "./logger.js";
 
-export const MiddleWares = (app: Express) => {
-  app.use((req, res, next) => {
+export const MiddleWares = {
+  apiKey: (req, res, next) => {
     const apiKeyQS = req.query.apiKey;
     const apiKeyEnv = process.env.API_KEY;
 
@@ -13,16 +12,18 @@ export const MiddleWares = (app: Express) => {
       return;
     }
     next();
-  });
-
-  app.use((err, _req, res, _next) => {
+  },
+  error: (err, _req, res, _next) => {
     console.error(err.stack);
     res.status(500).send("Something broke! 🔥");
-  });
-
-  app.use((req, res, next) => {
-    Logger.debug(`Request received: ${JSON.stringify(req)}`, "Request");
-    Logger.debug(`Response: ${JSON.stringify(res)}`, "Response");
+  },
+  audit: (req, res, next) => {
+    const { ip, hostname, query } = req;
+    Logger.debug(
+      `Request received: [${ip} | ${hostname}] ${JSON.stringify(query)}`,
+      "Request"
+    );
+    // Logger.debug(`Response: ${JSON.stringify(res)}`, "Response");
     next();
-  });
+  },
 };

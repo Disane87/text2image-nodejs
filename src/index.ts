@@ -15,9 +15,15 @@ const app = express();
 Logger.info(`WORKDIR: ${WORKDIR}`, "Runtime");
 Logger.info(`ENVIRONMENT: ${ENVIRONMENT}`, "Runtime");
 
+app.use(MiddleWares.apiKey, MiddleWares.audit, MiddleWares.error);
+
 app.get("/", async (req, res) => {
   res.send(
-    `Please check out the documentation at <a href="https://github.com/Disane87/text2image-nodejs">https://github.com/Disane87/text2image-nodejs</a> for more info about usage.`
+    `Please check out the documentation at <a href="https://github.com/Disane87/text2image-nodejs">https://github.com/Disane87/text2image-nodejs</a> for more info about usage.
+    <br>
+    <br>
+    You can use these this links as example to test the API:
+    `
   );
 });
 
@@ -94,4 +100,3 @@ app.listen(EXPRESS_PORT, () => {
 });
 
 await checkAndCopyFolders();
-MiddleWares(app);
