@@ -3,8 +3,9 @@ import * as cheerio from "cheerio";
 import { readFile } from "fs/promises";
 import nodeHtmlToImage from "node-html-to-image";
 import path from "path";
-import process from "process";
 import { Preset } from "./interfaces/presets.interface";
+import { WORKDIR } from "./constants.js";
+import Logger from "./logger.js";
 
 const PUPETEER_ARGS = {
   puppeteerArgs: {
@@ -19,16 +20,7 @@ const PUPETEER_ARGS = {
   },
 };
 
-const ENVIRONMENT = process.env.NODE_ENV || "development";
-const WORKDIR = path.join(
-  process.cwd(),
-  ENVIRONMENT == "development" ? "src" : "dist"
-);
-
 const TEMPLATE_PATH = path.join(WORKDIR, "templates");
-
-console.log("WORKDIR:", WORKDIR);
-console.log("ENVIRONMENT:", ENVIRONMENT);
 
 export async function addTextToImage(
   imageUrl: string,
@@ -80,21 +72,20 @@ export async function generateImageFromOpenGraph(
         ogData[property] = content;
       }
     });
-    console.log("OG data:", ogData);
+    Logger.debug(`OpenGraph data: ${JSON.stringify(ogData)}`, "OpenGraph");
 
     const htmlContent = await getHTML(preset);
 
-    const htmlImage = (await nodeHtmlToImage({
+    const imageBuffer = (await nodeHtmlToImage({
       html: htmlContent,
       content: ogData,
       ...PUPETEER_ARGS,
     })) as Buffer;
 
-    return { imageBuffer: htmlImage, mimeType: "image/png" };
+    return { imageBuffer, mimeType: "image/png" };
   } catch (error) {
-    console.error("Error:", error);
-    // Handle errors appropriately
-    return null;
+    Logger.error(`🔥: ${error}`, "OpenGraph");
+    throw new Error(error);
   }
 }
 
@@ -110,6 +101,6 @@ async function getHTML(preset: Preset) {
     <head>${headTemplate}</head>
     <body class="h-[${sizes.height}px] w-[${sizes.width}px]">${templateContent}</body>
   </html>`;
-  console.log("HTML content:", htmlContent);
+  Logger.debug(`HTML content: ${htmlContent}`, "HTML");
   return htmlContent;
 }

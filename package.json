@@ -5,23 +5,25 @@
   "description": "",
   "main": "index.js",
   "type": "module",
- 
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -p . && npx cpx ./src/{fonts,config,templates}/** ./dist/",
+    "build": "tsc -p . && npx cpx ./src/{config,templates}/** ./dist/ && npx cpx ./src/{config,templates}/** ./dist/.tmp/",
     "start": "node dist/index.js",
     "start:dev": "npx nodemon -e ts,hbs",
-    "docker:build": "docker build -t disane/text2image ."
+    "docker:build": "docker build -t disane/text2image .",
+    "docker:test": "npm run build && docker build -t disane/text2image:next . && docker run -d --name='text2image' -e 'API_KEY'='1234567890' -p '3000:3000/tcp'  'disane/text2image:next' && docker logs text2image --tail 50 -f"
   },
   "author": "Marco Franke @Disane87",
   "license": "MIT",
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.9.0",
+    "cpx": "^1.5.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@ptkdev/logger": "^1.8.0",
     "axios": "^1.6.1",
     "canvas": "^2.11.2",
     "cheerio": "^1.0.0-rc.12",

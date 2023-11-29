@@ -1,4 +1,5 @@
 import { Express } from "express";
+import Logger from "./logger.js";
 
 export const MiddleWares = (app: Express) => {
   app.use((req, res, next) => {
@@ -14,8 +15,14 @@ export const MiddleWares = (app: Express) => {
     next();
   });
 
-  //   app.use((err, _req, res, _next) => {
-  //     console.error(err.stack);
-  //     res.status(500).send("Something broke!");
-  //   });
+  app.use((err, _req, res, _next) => {
+    console.error(err.stack);
+    res.status(500).send("Something broke! 🔥");
+  });
+
+  app.use((req, res, next) => {
+    Logger.debug(`Request received: ${JSON.stringify(req)}`, "Request");
+    Logger.debug(`Response: ${JSON.stringify(res)}`, "Response");
+    next();
+  });
 };
