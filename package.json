@@ -10,6 +10,7 @@
     "build": "tsc -p . && npx cpx ./src/{config,templates}/** ./dist/ && npx cpx ./src/{config,templates}/** ./dist/.tmp/",
     "start": "node dist/index.js",
     "start:dev": "npx nodemon -e ts,hbs",
+    "predocker:build": "npm run build",
     "docker:build": "docker build -t disane/text2image .",
     "docker:test": "npm run build && docker build -t disane/text2image:next . && docker run -d --name='text2image' -e 'API_KEY'='1234567890' -p '3000:3000/tcp'  'disane/text2image:next' && docker logs text2image --tail 50 -f"
   },
