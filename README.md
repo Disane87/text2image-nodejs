@@ -1,73 +1,139 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+![GitHub](https://img.shields.io/github/license/Disane87/text2image-nodejs)
+![GitHub issues by-label](https://img.shields.io/github/issues/Disane87/text2image-nodejs/bug?color=red)
+![GitHub contributors](https://img.shields.io/github/contributors/Disane87/text2image-nodejs)
+![Docker Stars](https://img.shields.io/docker/stars/disane/text2image)
+![Docker Pulls](https://img.shields.io/docker/pulls/disane/text2image)
+![Docker Image Version (latest semver)](https://img.shields.io/docker/v/disane/text2image)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![image](./public/text2image.png)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# text2image
 
-## Description
+This docker container enables you to create images from links. This is pretty useful for using in blogs or automations (like [n8n](https://blog.disane.dev/n8n-unleashed/)).
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+# ✨ Features
 
-## Installation
+- Customizable presets (for sizes or templates)
+- Highly customziable via HTML/CSS
+- Complete support füpr custom fonts
+- Built-in [TailwindCSS](https://tailwindcss.com/docs/installation) support
+- Runs within a Docker container
+- Secured by configurable `API_KEY`
+- Generate images from URLs with [OpenGraph](https://ogp.me/) fetching
 
-```bash
-$ npm install
-```
+> [!NOTE]
+> Using the `API_KEY` is mandatory to prevent unauthorized access
 
-## Running the app
+# 🏗️ Installation
+
+To use this piece of software you need a Docker host. Just run the following command and you're good to go:
 
 ```bash
-# development
-$ npm run start
+docker run
+  -d --name='text2image'
+  -e 'API_KEY'='[YOUR API-KEY]'
+  -p '3000:3000/tcp'
+  -v '/mnt/user/appdata/text2image/config':'/text2image/config':'rw'
+  -v '/mnt/user/appdata/text2image/logs':'/text2image/logs':'rw' 'disane/text2image'
+  'disane/text2image'
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
-## Test
+> [!IMPORTANT]
+> Please don't forget to mount the `config` and`log` folder. You can do that with docker volumnes against `/text2image/config` or `/text2image/log/`
+
+> [!NOTE]
+> If you mount the folders the default content is only copied once! Therefore you won't get new templates. If you want to get the latest stuff, you have do remove all mounted folders and restart the container. _Make a backup of your files_. The System will copy the default stuff if they are missing. After that you can copy/replace your changes. Currently there is no migration or merging your content with new one.
+
+# 🛠️ Usage
+
+You can create new images by browsing the following url (only `GET` is supported):
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+curl -XGET 'https://[YOUR URL]:3000/image/[:preset]/[image]/?url=https://images.unsplash.com/photo-1682686581660-3693f0c588d2&text=Test&apiKey=[YOUR APIKEY]'
 ```
 
-## Support
+# 🤔 Parameters
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Param     | Mandatory | Default | Description                                                    |
+| --------- | --------- | ------- | -------------------------------------------------------------- |
+| preset    | yes       | null    | Preset to use. Defined in \`./config/presets.json\`            |
+| url       | yes       | null    | Used to fetch an image or OpenGraph data                       |
+| openGraph | no        | false   | Activates fetching opengraph data                              |
+| text      | depends   | null    | Test to show in image (only needed when `openGraph` = `false`) |
+| image     | yes       | null    | Filename with extension                                        |
+| apiKey    | yes       | null    | Your defined API-Key                                           |
 
-## Stay in touch
+# 👨‍💻 Presets
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+You can add `presets` for different purposes like social media images or something else. All presets are defined in `./config/presets.json`:
 
-## License
+```json
+{
+  "blog": {
+    "sizes": {
+      "width": 1920,
+      "height": 1080
+    },
+    "template": "blog.hbs"
+  },
+  "instagram": {
+    "sizes": {
+      "width": 1080,
+      "height": 1080
+    },
+    "template": "instagram.hbs"
+  }
+}
+```
 
-Nest is [MIT licensed](LICENSE).
+> [!NOTE]
+> Every preset has only one template. This templates uses simple HTML/CSS with native TailwindCSS support.
+
+# 💫 Customizing
+
+With [handlebars](https://handlebarsjs.com/) it's possible to use pre-defined data within preset templates.
+
+These variables/placholders are available:
+
+- In `OpenGraph` mode: All `<meta property="og:[xyz]"></meta>` are converted to an object.
+  Conversion convention: `og:` is removed and all `:` are replaced by `_`. In example `og:title` would be `title`. `og:image:width` would be `image_width`.
+
+- In `normal` mode (`OpenGraph` = `false`) only `imageUrl`, `preset` and `text` is available.
+
+# 🆙 Custom font
+
+We're exposing a `head.hbs` template to enable custom HTML stuff, like custom fonts:
+
+```hbs
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.cdnfonts.com/css/luckiest-guy" rel="stylesheet" />
+<style>
+  .stroke { -webkit-text-stroke-width: 5px; -webkit-text-stroke-color: #000; }
+
+</style>
+<script>
+  tailwind.config = { theme: { extend: { fontFamily: { 'luckiest-guy': 'Luckiest
+  Guy' } } } }
+</script>
+```
+
+# 🚀 Examples
+
+## OpenGraph
+
+![image](./public/openGraph.png)
+
+```bash
+GET https://[YOUR URL]/image/instagram/test.jpg/?openGraph=true&url=https://blog.disane.dev/pseudo-selector-nth-child-ganz-einfach-erklart/
+```
+
+## Normal Mode
+
+![image](./public/normalMode.png)
+
+```bash
+GET https://[YOUR URL]/image/blog/test.jpg?url=https://images.unsplash.com/photo-1682687982468-4584ff11f88a&text=Wonderful%20image
+```
+
+# Cheers 🔥
