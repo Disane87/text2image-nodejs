@@ -3,9 +3,12 @@ export interface Presets {
 }
 
 export interface Preset {
-  sizes: {
-    width: number;
-    height: number;
-  };
+  sizes: PresetSizes;
   template: string;
+  openGraph: boolean;
+}
+
+export interface PresetSizes {
+  width: number;
+  height: number;
 }

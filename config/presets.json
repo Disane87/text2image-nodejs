@@ -4,13 +4,15 @@
             "width": 1920,
             "height": 1080
         },
-        "template": "blog.hbs"
+        "template": "blog.hbs",
+        "openGraph": false
     },
     "instagram": {
         "sizes": {
             "width": 1080,
             "height": 1080
         },
-        "template": "instagram.hbs"
+        "template": "instagram.hbs",
+        "openGraph": true
     }
 }
