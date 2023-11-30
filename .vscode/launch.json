@@ -2,10 +2,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "npm run start:dev",
-      "name": "Run npm start:dev",
+      "type": "node",
       "request": "launch",
-      "type": "node-terminal"
+      "name": "Debug Nest Framework",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["npm", "run", "start:debug"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"],
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "development"
+      }
     }
   ]
 }
