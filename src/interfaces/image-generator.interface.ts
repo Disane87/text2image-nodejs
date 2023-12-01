@@ -1,4 +1,4 @@
 export interface ImageGenerator {
-  imageBuffer: Buffer;
-  mimeType: string;
+    imageBuffer: Buffer;
+    mimeType: string;
 }
