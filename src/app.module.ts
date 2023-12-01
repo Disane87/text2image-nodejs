@@ -9,27 +9,27 @@ import { ImageController } from "./controllers/image/image.controller";
 import path from "path";
 
 @Module({
-  imports: [HttpModule],
-  controllers: [ImageController],
-  providers: [
-    DefaultConfigService,
-    ImageService,
-    PresetService,
-    {
-      provide: `WORK_DIR`,
-      useFactory: async () => {
-        const workdir = path.join(process.cwd(), `.`);
-        return workdir;
-      },
-    },
-  ],
+    imports: [HttpModule],
+    controllers: [ImageController],
+    providers: [
+        DefaultConfigService,
+        ImageService,
+        PresetService,
+        {
+            provide: `WORK_DIR`,
+            useFactory: async () => {
+                const workdir = path.join(process.cwd(), `.`);
+                return workdir;
+            },
+        },
+    ],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    const middleWares = [
-      process.env.NODE_ENV == `development` ? null : ApiKeyMiddleware,
-      AuditMiddleware,
-    ];
-    consumer.apply(...middleWares).forRoutes(`*`);
-  }
+    configure(consumer: MiddlewareConsumer) {
+        const middleWares = [
+            process.env.NODE_ENV == `development` ? null : ApiKeyMiddleware,
+            AuditMiddleware,
+        ];
+        consumer.apply(...middleWares).forRoutes(`*`);
+    }
 }
