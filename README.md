@@ -50,10 +50,10 @@ docker run
 You can create new images by browsing the following url (only `GET` is supported):
 
 ```bash
-curl -XGET 'https://[YOUR URL]:3000/image/[:preset]/[image]/?url=https://images.unsplash.com/photo-1682686581660-3693f0c588d2&text=Test&apiKey=[YOUR APIKEY]'
+curl -XGET 'https://[YOUR URL]:3000/image/[:preset]/[image]/?url=https://images.unsplash.com/photo-1682686581660-3693f0c588d2&apiKey=[YOUR APIKEY]'
 ```
 
-# 🤔 `GET`-Parameters
+# 🤞 `GET`-Parameters
 
 | Param         | Mandatory | Default | Description                                                    |
 | ---------     | --------- | ------- | -------------------------------------------------------------- |
@@ -62,7 +62,10 @@ curl -XGET 'https://[YOUR URL]:3000/image/[:preset]/[image]/?url=https://images.
 | image         | ✅         | null    | Filename with extension                                        |
 | apiKey        | ✅         | null    | Your defined API-Key                                           |
 
-# 🤔 `POST`-Parameters
+> [!NOTE]
+> All other parameters in query string will be passed into the `data` to use in the template. See [customizing](#💫-customizing) for more.
+
+# 🤙 `POST`-Parameters
 
 Method `POST` supports/needs all `GET` parameters but you can enrich the data for the template by giving the `POST` an `application/json` payload with this structure:
 ``` json
@@ -148,15 +151,41 @@ We're exposing a `head.hbs` template to enable custom HTML stuff, like custom fo
 ![image](./public/openGraph.png)
 
 ```bash
-GET https://[YOUR URL]/image/instagram/test.jpg/?openGraph=true&url=https://blog.disane.dev/pseudo-selector-nth-child-ganz-einfach-erklart/
+GET https://[YOUR URL]/image/instagram/test.jpg/?openGraphURl=https://blog.disane.dev/pseudo-selector-nth-child-ganz-einfach-erklart/
 ```
 
-## Normal Mode
+```hbs
+<div class="bg-white h-full w-full flex flex-col rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <img class="rounded-t-lg" src="{{openGraph.image}}" alt="{{ openGraph.title }}" />
+    <div class="p-5 h-full grow">
+        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ openGraph.title }}</h5>
+        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{openGraph.description}}</p>
+        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{openGraph.site_name}}</p>
+    </div>
+</div>
+
+
+```
+
+## "Normal" Mode
 
 ![image](./public/normalMode.png)
 
 ```bash
 GET https://[YOUR URL]/image/blog/test.jpg?url=https://images.unsplash.com/photo-1682687982468-4584ff11f88a&text=Wonderful%20image
 ```
+
+```hbs
+<div class="absolute transparent w-full h-full flex flex-col place-items-center justify-center font-luckiest-guy">
+     <div class="stroke p-4 text-center text-9xl place-items-center text-white transparent break-words drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)]">
+    {{text}}
+    </div>
+</div>
+
+<img class="object-fit w-full h-full" src="{{url}}" />
+```
+
+> [!NOTE]
+> You can even mix params from query string with data form an webpage via `OpenGraph`
 
 # Cheers 🔥
