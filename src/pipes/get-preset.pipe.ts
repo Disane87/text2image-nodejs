@@ -5,10 +5,10 @@ import { PresetService } from "src/services/preset/preset.service";
 
 @Injectable()
 export class GetPresetPipe implements PipeTransform {
-  // inject any dependency
-  constructor(private presetService: PresetService) {}
+    // inject any dependency
+    constructor(private presetService: PresetService) {}
 
-  async transform(value: string): Promise<Preset> {
-    return this.presetService.getPreset(value);
-  }
+    async transform(value: string): Promise<Preset> {
+        return this.presetService.getPreset(value);
+    }
 }

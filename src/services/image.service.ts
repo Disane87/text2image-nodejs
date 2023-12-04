@@ -5,7 +5,7 @@ import { TemplateData } from "src/interfaces/template-data.interface";
 
 @Injectable()
 export class ImageService {
-  constructor() {}
+    constructor() {}
 
     private puppeteerArgs = {
         headless: true,
@@ -18,19 +18,18 @@ export class ImageService {
         ],
     };
 
-  async generateImageWithData(
-    data: TemplateData,
-    html: string,
-  ): Promise<ImageGenerator | null> {
-    const htmlImage = (await nodeHtmlToImage({
-      html: html,
-      content: {
-        ...data,
-      },
-      puppeteerArgs: this.puppeteerArgs,
-    })) as Buffer;
+    async generateImageWithData(
+        data: TemplateData,
+        html: string,
+    ): Promise<ImageGenerator | null> {
+        const htmlImage = (await nodeHtmlToImage({
+            html: html,
+            content: {
+                ...data,
+            },
+            puppeteerArgs: this.puppeteerArgs,
+        })) as Buffer;
 
-    return { imageBuffer: htmlImage, mimeType: `image/png` };
-  }
-
+        return { imageBuffer: htmlImage, mimeType: `image/png` };
+    }
 }

@@ -47,22 +47,21 @@ export class PresetService implements OnApplicationBootstrap {
         return preset;
     }
 
-  public async getPresetTemplateAsHtml(
-    preset: Preset | string,
-  ): Promise<string> {
-    if (typeof preset === `string`) {
-      preset = await this.getPreset(preset);
-    }
-    const sizes = preset.sizes;
-    const headTemplate = fs.readFileSync(
-      `${this.templatePath}/head.hbs`,
-      `utf8`,
-    );
-    const templateContent = fs.readFileSync(
-      `${this.templatePath}/${preset.template}`,
-      `utf8`,
-    );
-
+    public async getPresetTemplateAsHtml(
+        preset: Preset | string,
+    ): Promise<string> {
+        if (typeof preset === `string`) {
+            preset = await this.getPreset(preset);
+        }
+        const sizes = preset.sizes;
+        const headTemplate = fs.readFileSync(
+            `${this.templatePath}/head.hbs`,
+            `utf8`,
+        );
+        const templateContent = fs.readFileSync(
+            `${this.templatePath}/${preset.template}`,
+            `utf8`,
+        );
 
         const htmlContent = `
         <html class="h-[${sizes.height}px] w-[${sizes.width}px]">

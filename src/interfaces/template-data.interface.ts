@@ -1,9 +1,9 @@
 export interface TemplateData {
-  url?: string;
+    url?: string;
 
-  queryParams?: { [key: string]: unknown };
+    queryParams?: { [key: string]: unknown };
 
-  data?: { [key: string]: unknown };
+    data?: { [key: string]: unknown };
 
-  openGraph?: { [key: string]: string };
+    openGraph?: { [key: string]: string };
 }
