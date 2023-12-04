@@ -1,108 +1,99 @@
 import {
-    Controller,
-    Get,
-    HttpException,
-    HttpStatus,
-    Logger,
-    Param,
-    ParseBoolPipe,
-    Query,
-    Res,
-    StreamableFile,
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Logger,
+  Param,
+  Post,
+  Query,
+  Req,
+  Res,
+  StreamableFile,
+  UseInterceptors,
+
 } from "@nestjs/common";
 
 import { ImageService } from "src/services/image.service";
-import { PresetService } from "src/services/preset/preset.service";
-import type { Response } from "express";
+import type { Request, Response } from "express";
+import { ImageInterceptor } from "src/interceptors/image-param.interceptor";
+import { GetPresetHtmlPipe } from "src/pipes/get-preset.html.pipe";
+import { GetPresetPipe } from "src/pipes/get-preset.pipe";
+import { Preset } from "src/interfaces/presets.interface";
+import { OpenGraphService } from "src/services/open-graph.service";
+import { TemplateData } from "src/interfaces/template-data.interface";
 
 @Controller(`image`)
 export class ImageController {
-    constructor(
-        private readonly imageService: ImageService,
-        private readonly presetService: PresetService,
-    ) {}
+  constructor(
+    private readonly imageService: ImageService,
+    private readonly openGraphService: OpenGraphService,
+  ) {}
 
-    @Get(`:preset/:fileName`)
-    async generateImage(
-        @Res({ passthrough: true }) res: Response,
-        @Param(`preset`) presetName: string,
-        @Param(`fileName`) fileName: string,
-        @Query(`url`) url: string,
-        @Query(`openGraph`, ParseBoolPipe) openGraph: boolean,
-        @Query(`text`) text?: string,
-    ): Promise<StreamableFile> {
-        if (!presetName) {
-            Logger.error(`Missing required parameters (preset)`, `Request`);
-            throw new HttpException(
-                `Missing required parameters (preset)`,
-                HttpStatus.BAD_REQUEST,
-            );
-        }
+  @Get(`:preset/:fileName`)
+  @UseInterceptors(ImageInterceptor)
+  async returnImage(
+    @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
+    @Param(`preset`, GetPresetPipe) preset: Preset,
+    @Param(`preset`, GetPresetHtmlPipe) presetHtml: string,
+    @Query(`url`) url: string,
+    @Query(`openGraphUrl`) openGraphUrl: string,
+  ): Promise<StreamableFile> {
+    const data: TemplateData = {
+      url,
+      queryParams: req.query as { [key: string]: unknown },
+    };
 
-        if (!fileName) {
-            Logger.error(`Missing required parameters (fileName)`, `Request`);
-            throw new HttpException(
-                `Missing required parameters (fileName)`,
-                HttpStatus.BAD_REQUEST,
-            );
-        }
+    if (openGraphUrl) {
+      data.openGraph =
+        await this.openGraphService.getOpenGraphMetadata(openGraphUrl);
+    }
 
-        if (!openGraph) {
-            if (!url) {
-                Logger.error(`Missing required parameters (url)`, `Request`);
-                throw new HttpException(
-                    `Missing required parameters (url)`,
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
+    return await this.generateImage(data, presetHtml, res);
+  }
 
-            if (!text) {
-                Logger.error(`Missing required parameters (text)`, `Request`);
-                throw new HttpException(
-                    `Missing required parameters (text)`,
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
+  @Post(`:preset/:fileName`)
+  @UseInterceptors(ImageInterceptor)
+  async returnImagePost(
+    @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
+    @Param(`preset`, GetPresetPipe) preset: Preset,
+    @Param(`preset`, GetPresetHtmlPipe) presetHtml: string,
+    @Query(`url`) url: string,
+    @Query(`openGraphUrl`) openGraphUrl: string,
+    @Body(`data`) postData: { [key: string]: unknown },
+  ): Promise<StreamableFile> {
+    const data: TemplateData = {
+      url,
+      queryParams: req.query as { [key: string]: unknown },
+      data: postData,
+    };
 
-        if (!url) {
-            Logger.error(`Missing required parameters (url)`, `Request`);
-            throw new HttpException(
-                `Missing required parameters (url)`,
-                HttpStatus.BAD_REQUEST,
-            );
-        }
+    if (openGraphUrl) {
+      data.openGraph =
+        await this.openGraphService.getOpenGraphMetadata(openGraphUrl);
+    }
 
-        const preset = await this.presetService.getPreset(presetName);
-        Logger.log(`Preset name: ${presetName}`, `Request`);
-        Logger.debug(`Preset: ${JSON.stringify(preset)}`, `Request`);
+    return await this.generateImage(data, presetHtml, res);
+  }
 
-        if (preset.openGraph != openGraph) {
-            throw new HttpException(
-                `Preset ${presetName} not suitable for using with OpenGraph. Check presets`,
-                HttpStatus.BAD_REQUEST,
-            );
-        }
+  private async generateImage(
+    data: TemplateData,
+    presetHtml: string,
+    res: Response,
+  ) {
+    Object.keys(data.queryParams).includes(`apiKey`) &&
+      delete data.queryParams.apiKey;
 
-        let result: {
-            imageBuffer: Buffer;
-            mimeType: string;
-        } | null = null;
+    const result = await this.imageService.generateImageWithData(
+      data,
+      presetHtml,
+    );
 
-        const presetHtml =
-            await this.presetService.getPresetTemplateAsHtml(preset);
-        if (openGraph) {
-            result = await this.imageService.generateImageFromOpenGraph(
-                url,
-                presetHtml,
-            );
-        } else {
-            result = await this.imageService.addTextToImage(
-                url,
-                text,
-                presetHtml,
-            );
-        }
+    Logger.debug(`Data: ${JSON.stringify(data)}`, `ImageController`);
+
 
         if (result) {
             const { imageBuffer, mimeType } = result;
