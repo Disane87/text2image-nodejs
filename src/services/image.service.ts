@@ -7,16 +7,16 @@ import { TemplateData } from "src/interfaces/template-data.interface";
 export class ImageService {
   constructor() {}
 
-  private puppeteerArgs = {
-    headless: true,
-    args: [
-      `--no-sandbox`,
-      `--disable-setuid-sandbox`,
-      `--headless`,
-      `--disable-gpu`,
-      `--disable-dev-shm-usage`,
-    ],
-  };
+    private puppeteerArgs = {
+        headless: true,
+        args: [
+            `--no-sandbox`,
+            `--disable-setuid-sandbox`,
+            `--headless`,
+            `--disable-gpu`,
+            `--disable-dev-shm-usage`,
+        ],
+    };
 
   async generateImageWithData(
     data: TemplateData,
@@ -32,4 +32,5 @@ export class ImageService {
 
     return { imageBuffer: htmlImage, mimeType: `image/png` };
   }
+
 }

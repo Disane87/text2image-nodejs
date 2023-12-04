@@ -12,6 +12,7 @@ import {
   Res,
   StreamableFile,
   UseInterceptors,
+
 } from "@nestjs/common";
 
 import { ImageService } from "src/services/image.service";
@@ -93,14 +94,15 @@ export class ImageController {
 
     Logger.debug(`Data: ${JSON.stringify(data)}`, `ImageController`);
 
-    if (result) {
-      const { imageBuffer, mimeType } = result;
-      res.set({
-        "Content-Type": mimeType,
-      });
-      return new StreamableFile(imageBuffer);
-    } else {
-      throw new HttpException(`Image not found`, HttpStatus.BAD_REQUEST);
+
+        if (result) {
+            const { imageBuffer, mimeType } = result;
+            res.set({
+                "Content-Type": mimeType,
+            });
+            return new StreamableFile(imageBuffer);
+        } else {
+            throw new HttpException(`Image not found`, HttpStatus.BAD_REQUEST);
+        }
     }
-  }
 }

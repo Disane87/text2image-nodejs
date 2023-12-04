@@ -25,13 +25,14 @@ import path from "path";
       },
     },
   ],
+
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    const middleWares = [
-      process.env.NODE_ENV == `development` ? null : ApiKeyMiddleware,
-      AuditMiddleware,
-    ];
-    consumer.apply(...middleWares).forRoutes(`*`);
-  }
+    configure(consumer: MiddlewareConsumer) {
+        const middleWares = [
+            process.env.NODE_ENV == `development` ? null : ApiKeyMiddleware,
+            AuditMiddleware,
+        ];
+        consumer.apply(...middleWares).forRoutes(`*`);
+    }
 }
