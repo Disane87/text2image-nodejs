@@ -1,3 +1,4 @@
+import { OpenGraphService } from "./services/open-graph.service";
 import { DefaultConfigService } from "./services/default-config.service";
 import { MiddlewareConsumer, Module } from "@nestjs/common";
 import { ImageService } from "./services/image.service";
@@ -12,6 +13,7 @@ import path from "path";
   imports: [HttpModule],
   controllers: [ImageController],
   providers: [
+    OpenGraphService,
     DefaultConfigService,
     ImageService,
     PresetService,

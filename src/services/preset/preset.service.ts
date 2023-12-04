@@ -47,7 +47,12 @@ export class PresetService implements OnApplicationBootstrap {
     return preset;
   }
 
-  public async getPresetTemplateAsHtml(preset: Preset): Promise<string> {
+  public async getPresetTemplateAsHtml(
+    preset: Preset | string,
+  ): Promise<string> {
+    if (typeof preset === `string`) {
+      preset = await this.getPreset(preset);
+    }
     const sizes = preset.sizes;
     const headTemplate = fs.readFileSync(
       `${this.templatePath}/head.hbs`,

@@ -53,16 +53,29 @@ You can create new images by browsing the following url (only `GET` is supported
 curl -XGET 'https://[YOUR URL]:3000/image/[:preset]/[image]/?url=https://images.unsplash.com/photo-1682686581660-3693f0c588d2&text=Test&apiKey=[YOUR APIKEY]'
 ```
 
-# 🤔 Parameters
+# 🤔 `GET`-Parameters
 
-| Param     | Mandatory | Default | Description                                                    |
-| --------- | --------- | ------- | -------------------------------------------------------------- |
-| preset    | yes       | null    | Preset to use. Defined in \`./config/presets.json\`            |
-| url       | yes       | null    | Used to fetch an image or OpenGraph data                       |
-| openGraph | no        | false   | Activates fetching opengraph data                              |
-| text      | depends   | null    | Test to show in image (only needed when `openGraph` = `false`) |
-| image     | yes       | null    | Filename with extension                                        |
-| apiKey    | yes       | null    | Your defined API-Key                                           |
+| Param         | Mandatory | Default | Description                                                    |
+| ---------     | --------- | ------- | -------------------------------------------------------------- |
+| preset        | ✅        | null    | Preset to use. Defined in \`./config/presets.json\`            |
+| openGraphUrl  | ❌         | false   | Activates fetching opengraph data from given url               |
+| image         | ✅         | null    | Filename with extension                                        |
+| apiKey        | ✅         | null    | Your defined API-Key                                           |
+
+# 🤔 `POST`-Parameters
+
+Method `POST` supports/needs all `GET` parameters but you can enrich the data for the template by giving the `POST` an `application/json` payload with this structure:
+``` json
+{
+    "data": {
+        "test": "yes"
+    }
+}
+```
+
+> [!IMPORTANT]
+> You need an object `data` in your payload!
+
 
 # 👨‍💻 Presets
 
@@ -90,16 +103,26 @@ You can add `presets` for different purposes like social media images or somethi
 > [!NOTE]
 > Every preset has only one template. This templates uses simple HTML/CSS with native TailwindCSS support.
 
+
 # 💫 Customizing
 
 With [handlebars](https://handlebarsjs.com/) it's possible to use pre-defined data within preset templates.
 
-These variables/placholders are available:
+These variables/placeholders are available in the template:
+```ts
+export interface TemplateData {
+  url?: string; // filled when query param `url`` is used
 
-- In `OpenGraph` mode: All `<meta property="og:[xyz]"></meta>` are converted to an object.
-  Conversion convention: `og:` is removed and all `:` are replaced by `_`. In example `og:title` would be `title`. `og:image:width` would be `image_width`.
+  queryParams?: { [key: string]: unknown }; // contains all query params
 
-- In `normal` mode (`OpenGraph` = `false`) only `imageUrl`, `preset` and `text` is available.
+  data?: { [key: string]: unknown }; // contains all data in payload.data
+
+  openGraph?: { [key: string]: string }; // contains all opengraph data (when `openGraphUrl` is used)
+}
+
+```
+
+available.
 
 # 🆙 Custom font
 
