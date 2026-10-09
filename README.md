@@ -189,3 +189,9 @@ GET https://[YOUR URL]/image/blog/test.jpg?url=https://images.unsplash.com/photo
 > You can even mix params from query string with data form an webpage via `OpenGraph`
 
 # Cheers 🔥
+
+---
+
+<p align="center">
+  Made by me at <a href="https://subthiel.eu/softwareentwicklung">Subthiel</a> — software development &amp; 3D printing
+</p>
